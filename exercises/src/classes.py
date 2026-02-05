@@ -10,7 +10,7 @@ Instructions:
 
 Run with: python exercise_2_classes.py
 """
-
+from operator import truediv
 
 # =============================================================================
 # EXERCISE 2.1: Basic Class with Constructor
@@ -37,15 +37,21 @@ Example:
 class Product:
     def __init__(self, name: str, price: float, quantity: int = 0):
         # TODO: Initialize instance attributes
-        pass
+        self.name=name
+        self.price=price
+        self.quantity=quantity
 
     def get_total_value(self) -> float:
         # TODO: Return price * quantity
-        pass
+        return self.price * self.quantity
+
+
 
     def is_in_stock(self) -> bool:
         # TODO: Return True if quantity > 0
-        pass
+        if(self.quantity > 0):
+            return True
+
 
 
 # =============================================================================
@@ -84,6 +90,7 @@ class BankAccount:
     def __init__(self, account_number: str, owner: str, balance: float = 0.0):
         # TODO: Initialize instance attributes
         # TODO: Increment total_accounts
+
         pass
 
     def deposit(self, amount: float) -> float:
