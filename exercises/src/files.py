@@ -39,7 +39,9 @@ Example:
 
 def write_lines(filepath: str, lines: list) -> None:
     # TODO: Implement this function
-    pass
+    with open(filepath, "w", encoding="utf-8") as f:
+       for line in lines:
+           f.write(f"{line}\n")
 
 
 # =============================================================================
@@ -64,7 +66,10 @@ Example:
 def read_lines(filepath: str) -> list:
     # TODO: Implement this function
     # Hint: Use strip() on each line to remove newlines
-    pass
+    result=  [] # we will store our output here
+    with open(filepath, "r", encoding="utf-8") as f:
+        for line in f:
+            result.append(line.strip())
 
 
 # =============================================================================
@@ -91,7 +96,8 @@ Example:
 def append_line(filepath: str, line: str) -> None:
     # TODO: Implement this function
     # Hint: Use "a" mode for append
-    pass
+    with open(filepath,"a", encoding="utf-8") as f:
+        f.write(f"{line}\n")
 
 
 # =============================================================================
@@ -116,7 +122,21 @@ Example:
 def count_words(filepath: str) -> int:
     # TODO: Implement this function
     # Hint: Read the file, split on whitespace, count the parts
-    pass
+    # split() --> tells us how much words there are in a given line for example
+    # if we do line.split() bc default read in from a file is done one line at a time
+    # with the for loop.
+    # so split() treats any amount of whitespace as a separator, and will cut a single string
+    # into a list of smaller strings. Then we will use len() which tells us how many items
+    # are inside a list- or how many characters are in a string. Since we are using a list here
+    # it works perfectly
+
+    ttlWords=0
+    with open(filepath, "r", encoding="utf-8") as f:
+        for line in f:
+            ttlWords+=len(line.split())
+    return ttlWords
+
+
 
 
 # =============================================================================
@@ -142,7 +162,14 @@ Example:
 
 def save_json(filepath: str, data: dict) -> None:
     # TODO: Implement this function
-    pass
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+        # data is the Source, f is the Destination, and indent is the formatter
+        # dump() takes us from a dict--> JSON
+        # load() takes us from JSON --> dict when reading from a File Object
+        # loads() takes us from JSON --> when reading from a String
+
+
 
 
 # =============================================================================
@@ -164,7 +191,9 @@ Example:
 
 def load_json(filepath: str) -> dict:
     # TODO: Implement this function
-    pass
+    with open(filepath, "r", encoding="utf-8") as f:
+        return json.load(f)
+
 
 
 # =============================================================================
@@ -190,7 +219,15 @@ Example:
 
 def update_json(filepath: str, **updates) -> None:
     # TODO: Implement this function
-    pass
+    with open(filepath, "r", encoding="utf-8") as f:
+        data= json.load(f) #read in the current data
+        # we need to update the data now. There is a built in dict update()
+        # that merges one dict into another. So If a key already exists,
+        # Python overwrites the old value with the new one. If the key is brand new,
+        # Python simply adds it to the dictionary.
+        data.update(updates)
+    with open (filepath, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
 
 
 # =============================================================================
