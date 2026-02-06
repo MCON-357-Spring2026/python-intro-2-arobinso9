@@ -49,8 +49,10 @@ class Product:
 
     def is_in_stock(self) -> bool:
         # TODO: Return True if quantity > 0
-        if(self.quantity > 0):
+        if self.quantity > 0:
             return True
+        else:
+            return False
 
 
 
@@ -86,25 +88,36 @@ Example:
 
 class BankAccount:
     # TODO: Add class attributes here
+    total_accounts=0
 
     def __init__(self, account_number: str, owner: str, balance: float = 0.0):
         # TODO: Initialize instance attributes
+        self.account_number=account_number
+        self.owner=owner
+        self.balance=balance
         # TODO: Increment total_accounts
-
-        pass
+        BankAccount.total_accounts+=1
 
     def deposit(self, amount: float) -> float:
         # TODO: Add amount to balance and return new balance
-        pass
+        return amount+ self.balance
 
     def withdraw(self, amount: float) -> float:
         # TODO: Subtract amount from balance
+        if amount>self.balance:
+            raise ValueError("Insuffiecent funds")
+        return self.balance-amount
         # TODO: Raise ValueError if amount > balance
-        pass
+
+        # The raise keyword stops the normal flow of the function immediately. No lines of code below it will run.
+        # Instead of just "failing silently" (like returning None or printing an error message),
+        # it creates an exception that travels up the program until something handles it.
+        # ValueError is a built-in Python exception type used when a function
+        # receives an argument that has the right type, but an inappropriate value
 
     def get_info(self) -> str:
         # TODO: Return string like "Account A001 (Alice): $100.00"
-        pass
+        return f"Account {self.account_number} ({self.owner}): ${self.balance:.2f} "
 
 
 # =============================================================================
@@ -141,25 +154,45 @@ Example:
 class Temperature:
     def __init__(self, celsius: float):
         # TODO: Initialize celsius attribute
-        pass
+        self.celsius=celsius
 
     @classmethod
+    #When you use @classmethod, Python automatically passes the class as the first argument.
+    # Hence cls for class
+    # a class & static method belongs to the class, while an instance class belongs to a specific instance
     def from_fahrenheit(cls, fahrenheit: float) -> "Temperature":
         # TODO: Convert F to C and create Temperature instance
-        pass
+        # C = (F - 32) * 5/9
+        celsius= (fahrenheit-32)* 5/9
+        return cls(celsius)
+    # this is a factory method- so 1) it belongs to the class
+    # and 2) its job is creation. Instead of just calculating a number or printing text,
+    # its primary purpose is to return a new instance of the class.
+    # The factory method- @classmethod, takes input and does ops or coversions on it.
+    # then we return cls(var) which automatically calls the class constructor __init__
+    # the constructor receives the params and saves it to the fields.
+    # so we just created a Temperature object :)
+
 
     @classmethod
     def from_kelvin(cls, kelvin: float) -> "Temperature":
         # TODO: Convert K to C and create Temperature instance
-        pass
+        # C = K - 273.15
+        celsius= kelvin- 273.15
+        return cls(celsius)
+
 
     def to_fahrenheit(self) -> float:
         # TODO: Return temperature in Fahrenheit
-        pass
+        # F = C * 9/5 + 32
+        return self.celsius*9/5+32
+
 
     def to_kelvin(self) -> float:
         # TODO: Return temperature in Kelvin
-        pass
+        # K = C + 273.15
+        return self.celsius+273.15
+
 
 
 # =============================================================================
@@ -212,31 +245,37 @@ Example:
 class Employee:
     def __init__(self, name: str, employee_id: str, base_salary: float):
         # TODO: Initialize attributes
-        pass
+        self.name=name
+        self.employee_id=employee_id
+        self.base_salary=base_salary
 
     def get_annual_salary(self) -> float:
         # TODO: Return base_salary
-        pass
+        return self.base_salary
 
     def get_info(self) -> str:
         # TODO: Return formatted string
-        pass
+        return f"ID: {self.employee_id} - {self.name}"
 
-
+# Manager inherits from Employee ie Manager extends Employee in Java terms
 class Manager(Employee):
     def __init__(self, name: str, employee_id: str, base_salary: float,
                  department: str, bonus: float = 0):
         # TODO: Call parent constructor with super()
         # TODO: Initialize department and bonus
-        pass
+        # super() calls Employee=the superclass, and then we say we want to call the __init__
+        # function with these params
+        super().__init__(name, employee_id, base_salary)
+        self.department=department
+        self.bonus=bonus
 
     def get_annual_salary(self) -> float:
         # TODO: Return base_salary + bonus
-        pass
+        return self.base_salary+self.bonus
 
     def get_info(self) -> str:
         # TODO: Return formatted string with Manager info
-        pass
+        return f"ID: {self.employee_id} - {self.name} (Manager, {self.department}"
 
 
 class Developer(Employee):
@@ -244,14 +283,19 @@ class Developer(Employee):
                  programming_languages: list = None):
         # TODO: Call parent constructor with super()
         # TODO: Initialize programming_languages (use empty list if None)
-        pass
+        super().__init__(name,employee_id,base_salary)
+        if programming_languages is None:
+            self.programming_languages=[]
+        else:
+            self.programming_languages=programming_languages
+
 
     def add_language(self, language: str) -> None:
         # TODO: Add language to the list
-        pass
+        self.programming_languages.append(language)
 
     def get_info(self) -> str:
         # TODO: Return formatted string with Developer info
-        pass
+        return f"ID: {self.employee_id} - {self.name} (Developer)"
 
 
