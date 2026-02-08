@@ -556,7 +556,7 @@ print("\n--- 4.2 JSON File → Python Dict ---")
 
 # Read from JSON file
 with open("course.json", "r", encoding="utf-8") as f:
-    loaded_data = json.load(f)
+
 
 print(f"Loaded course: {loaded_data['course']}")
 print(f"Topics: {loaded_data['topics']}")
