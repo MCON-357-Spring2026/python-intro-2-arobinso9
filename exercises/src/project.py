@@ -344,13 +344,22 @@ class Library:
         """Add a new book to the library."""
         # TODO: Generate new book_id using generate_id
         # TODO: Create Book, add to self.books, save, and return
-        pass
+        # generate_id(prefix: str, existing_ids: list) -> str
+        new_id= generate_id("BOOK", list(self.books.keys()))
+        new_book = Book(new_id, title, author, genre)
+        self.books[new_id] = new_book
+        self.save()
+        return new_book
 
 
     def add_borrower(self, name: str, email: str) -> Borrower:
         """Register a new borrower."""
         # TODO: Generate new borrower_id, create Borrower, add to self.borrowers, save, return
-        pass
+        new_id= generate_id("BORROWER", list(self.borrowers.keys()))
+        new_borrower = Borrower(new_id, name, email)
+        self.borrowers[new_id] = new_borrower
+        self.save()
+        return new_borrower
 
     def checkout_book(self, book_id: str, borrower_id: str) -> bool:
         """
@@ -361,7 +370,16 @@ class Library:
         # TODO: Validate borrower exists and can borrow
         # TODO: Update book.available, borrower.borrowed_books
         # TODO: Save and return True
-        pass
+        book= self.books.get(book_id)
+        borrower= self.borrowers.get(borrower_id)
+
+        if book and book.available and borrower and borrower.can_borrow():
+            book.available = False
+            borrower.borrow_book(book_id)
+            self.save()
+            return True
+        return False
+
 
     def return_book(self, book_id: str, borrower_id: str) -> bool:
         """
@@ -372,23 +390,51 @@ class Library:
         # TODO: Validate book is in borrower's borrowed_books
         # TODO: Update book.available, remove from borrowed_books
         # TODO: Save and return True
-        pass
+        # return_book(self, book_id: str) -> bool:
+
+        book= self.books.get(book_id)
+        borrower= self.borrowers.get(borrower_id)
+
+        if book and borrower and borrower.return_book(book_id):
+            book.available = False
+            self.save()
+            return True
+        return False
+
 
     def search_books(self, **criteria) -> list:
         """Search books by any criteria (title, author, genre, available)."""
         # TODO: Use search_items helper function
         # Hint: Convert self.books.values() to list of dicts first
-        pass
+        # search_items(items: list, **criteria) -> list:
+        # self.books is a dict of objects, but we need a dict of the obj matching to its fields.
+        # so we convert that using the to_dict function
+        book_dicts= [book.to_dict() for book in self.books.values()]
+        return search_items(book_dicts, **criteria)
+
 
     def get_available_books(self) -> list:
         """Get list of all available books."""
         # TODO: Return books where available=True
-        pass
+        return [book for book in self.books.values() if book.available]
 
     def get_borrower_books(self, borrower_id: str) -> list:
         """Get list of books currently borrowed by a borrower."""
         # TODO: Get borrower, return list of Book objects for their borrowed_books
-        pass
+        borrower= self.borrowers.get(borrower_id)
+        if not borrower:
+            return []
+        return [self.books[book_id] for book_id in borrower.borrowed_books if book_id in self.books]
+        # self.borrowers is a dict with a borrowerId that points to a Borrower obj.
+        # each borrower obj has a field borrowed_books which is a list of the borrowed_books
+        # we are getting the list of borrowed of books for this particular borrower and then are looping
+        # thru them. If the key= the boom_id is in our list of books, then we will get the Book object
+        # the book_id is pointing to and will add to our list. We will check all the books and then return
+        # the list
+
+
+
+
 
     def get_statistics(self) -> dict:
         """
@@ -401,6 +447,22 @@ class Library:
         # - checked_out: number of checked out books
         # - total_borrowers: number of borrowers
         # - books_by_genre: dict of genre -> count
-        pass
+
+
+        return{
+            "total_books": len(self.books),
+            "available_books": len(self.get_available_books()),
+            "checked_out": len([book for book in self.books.values() if not book.available]),
+            "total_borrowers": len(self.borrowers),
+            "books_by_genre": { genre: len([book for book in self.books.values() if book.genre == genre])
+                for genre in Book.GENRES
+
+        }
+            # list comprehensions are designed to read like a sentence so the order is flipped.
+            # meaning, we will have action first and then the setup vs. with normal loop swe have setup and then action
+            # so here we are saying count the books for every genre which is the same in loops as for every genre
+            # count the books
+            # In this dict- the key is the genre and the value is how many books we hv in this genre
+        }
 
 
