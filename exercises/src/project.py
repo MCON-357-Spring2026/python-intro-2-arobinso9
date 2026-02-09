@@ -251,10 +251,10 @@ class Borrower:
     def from_dict(cls, data: dict) -> "Borrower":
         # TODO: Create and return a Borrower instance from dictionary
         return cls(
-            borrower_id=data["Borrower_id"],
-            name=data["Name"],
-            email=data["Email"],
-            borrowed_books=data["Borrowed_Books"]
+            borrower_id=data["borrower_id"],
+            name=data["name"],
+            email=data["email"],
+            borrowed_books=data["borrowed_books"]
         )
 
 
@@ -396,7 +396,7 @@ class Library:
         borrower= self.borrowers.get(borrower_id)
 
         if book and borrower and borrower.return_book(book_id):
-            book.available = False
+            book.available = True
             self.save()
             return True
         return False
@@ -431,10 +431,6 @@ class Library:
         # thru them. If the key= the boom_id is in our list of books, then we will get the Book object
         # the book_id is pointing to and will add to our list. We will check all the books and then return
         # the list
-
-
-
-
 
     def get_statistics(self) -> dict:
         """

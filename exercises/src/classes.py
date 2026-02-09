@@ -88,6 +88,7 @@ Example:
 
 class BankAccount:
     # TODO: Add class attributes here
+    bank_name= "Python Bank"
     total_accounts=0
 
     def __init__(self, account_number: str, owner: str, balance: float = 0.0):
@@ -100,13 +101,15 @@ class BankAccount:
 
     def deposit(self, amount: float) -> float:
         # TODO: Add amount to balance and return new balance
-        return amount+ self.balance
+        self.balance+=amount
+        return self.balance
 
     def withdraw(self, amount: float) -> float:
         # TODO: Subtract amount from balance
         if amount>self.balance:
-            raise ValueError("Insuffiecent funds")
-        return self.balance-amount
+            raise ValueError("Insufficient funds")
+        self.balance-=amount
+        return self.balance
         # TODO: Raise ValueError if amount > balance
 
         # The raise keyword stops the normal flow of the function immediately. No lines of code below it will run.
@@ -275,7 +278,7 @@ class Manager(Employee):
 
     def get_info(self) -> str:
         # TODO: Return formatted string with Manager info
-        return f"ID: {self.employee_id} - {self.name} (Manager, {self.department}"
+        return f"ID: {self.employee_id} - {self.name} (Manager, {self.department})"
 
 
 class Developer(Employee):
