@@ -294,8 +294,10 @@ class Developer(Employee):
         # TODO: Add language to the list
         self.programming_languages.append(language)
 
+
+
     def get_info(self) -> str:
-        # TODO: Return formatted string with Developer info
+        # TODO:  Return formatted string with Developer info
         return f"ID: {self.employee_id} - {self.name} (Developer)"
 
 
