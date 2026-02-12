@@ -39,7 +39,9 @@ Example:
 
 def write_lines(filepath: str, lines: list) -> None:
     # TODO: Implement this function
-    pass
+    with open(filepath, "w", encoding="utf-8") as f:
+       for line in lines:
+           f.write(f"{line}\n")
 
 
 # =============================================================================
@@ -64,8 +66,11 @@ Example:
 def read_lines(filepath: str) -> list:
     # TODO: Implement this function
     # Hint: Use strip() on each line to remove newlines
-    pass
-
+    result=  [] # we will store our output here
+    with open(filepath, "r", encoding="utf-8") as f:
+        for line in f:
+            result.append(line.strip())
+    return result
 
 # =============================================================================
 # EXERCISE 3.3: Appending to a File
@@ -91,7 +96,9 @@ Example:
 def append_line(filepath: str, line: str) -> None:
     # TODO: Implement this function
     # Hint: Use "a" mode for append
-    pass
+    with open(filepath,"a", encoding="utf-8") as f:
+        f.write(f"{line}\n")
+
 
 
 # =============================================================================
@@ -116,7 +123,21 @@ Example:
 def count_words(filepath: str) -> int:
     # TODO: Implement this function
     # Hint: Read the file, split on whitespace, count the parts
-    pass
+    # split() --> tells us how much words there are in a given line for example
+    # if we do line.split() bc default read in from a file is done one line at a time
+    # with the for loop.
+    # so split() treats any amount of whitespace as a separator, and will cut a single string
+    # into a list of smaller strings. Then we will use len() which tells us how many items
+    # are inside a list- or how many characters are in a string. Since we are using a list here
+    # it works perfectly
+
+    ttlWords=0
+    with open(filepath, "r", encoding="utf-8") as f:
+        for line in f:
+            ttlWords+=len(line.split())
+    return ttlWords
+
+
 
 
 # =============================================================================
@@ -142,7 +163,14 @@ Example:
 
 def save_json(filepath: str, data: dict) -> None:
     # TODO: Implement this function
-    pass
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+        # data is the Source, f is the Destination, and indent is the formatter
+        # dump() takes us from a dict--> JSON
+        # load() takes us from JSON --> dict when reading from a File Object
+        # loads() takes us from JSON --> when reading from a String
+
+
 
 
 # =============================================================================
@@ -164,7 +192,9 @@ Example:
 
 def load_json(filepath: str) -> dict:
     # TODO: Implement this function
-    pass
+    with open(filepath, "r", encoding="utf-8") as f:
+        return json.load(f)
+
 
 
 # =============================================================================
@@ -190,7 +220,15 @@ Example:
 
 def update_json(filepath: str, **updates) -> None:
     # TODO: Implement this function
-    pass
+    with open(filepath, "r", encoding="utf-8") as f:
+        data= json.load(f) #read in the current data
+        # we need to update the data now. There is a built in dict update()
+        # that merges one dict into another. So If a key already exists,
+        # Python overwrites the old value with the new one. If the key is brand new,
+        # Python simply adds it to the dictionary.
+        data.update(updates)
+    with open (filepath, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
 
 
 # =============================================================================
@@ -228,33 +266,60 @@ class TodoList:
         self.filepath = filepath
         # TODO: Load existing todos from file, or initialize empty list
         # Hint: Use try/except to handle file not existing
-        self.todos = []
+        try:
+            with open(self.filepath, "r", encoding="utf-8") as f:
+                self.todos = json.load(f)
+        except FileNotFoundError:
+            print("File does not exist")
+            self.todos = []
+
 
     def _save(self) -> None:
         """Helper method to save todos to file."""
         # TODO: Save self.todos to self.filepath as JSON
-        pass
+        with open(self.filepath, "w", encoding="utf-8") as f:
+            json.dump(self.todos, f, indent=2)
 
     def _next_id(self) -> int:
         """Helper method to get the next available ID."""
         # TODO: Return max id + 1, or 1 if no todos exist
-        pass
+        if not self.todos:
+            return 1
+        # we are looping thru every dict in the list and pulling out each guys ID
+        # and adding it to a temp collection of IDs to find te largest one
+        # once we hit the end of the list and hc largest ID, we assign the new guy the max ID+1
+        # so no IDs are every used by different dict simutanously
+        return max(todo["id"] for todo in self.todos)+1
 
     def add(self, task: str) -> int:
         # TODO: Create new todo, add to list, save, return id
-        pass
+        new_id= self._next_id()
+        new_todo = {"id": new_id, "task": task, "done": False}
+        self.todos.append(new_todo)
+        self._save()
+        return new_id
 
     def complete(self, todo_id: int) -> bool:
         # TODO: Find todo by id, set done=True, save, return True
         # Return False if not found
-        pass
+        for todo in self.todos:
+            if todo["id"] == todo_id:
+                todo["done"]= True
+                self._save()
+                return True
+
+        return False
+
 
     def get_pending(self) -> list:
         # TODO: Return todos where done=False
-        pass
+        return [todo for todo in self.todos if not todo["done"]]
+        # we are looping thru the todos and checking if it is marked as done= false.
+        # if it is, we add it to a list, and return it.
+
 
     def get_all(self) -> list:
         # TODO: Return all todos
-        pass
+        return self.todos
 
 
