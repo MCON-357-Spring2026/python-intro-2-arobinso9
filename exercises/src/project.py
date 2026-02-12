@@ -95,10 +95,13 @@ def search_items(items: list, **criteria) -> list:
     for item in items:
         match=True
         # items() returns the key, value pairs
-        for key,value in criteria.items():
-            item_val = item.get(key)
+        for key,value in criteria.items(): # <--- Getting your WISH from the search
+            item_val = item.get(key) # <--- Getting the REALITY from the book
+            # in both cases we are getting the values from the Key, Value pairs and are then comparing them
 
             # case-insensitive check if both are strings
+            # value (What you want)- its the criteria- so in the above example it will be "Smith"
+            # item_val is what the book has. 
             if isinstance(item_val, str) and isinstance(value, str):
                 if item_val.lower() != value.lower():
                     match = False
